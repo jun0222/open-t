@@ -3,20 +3,25 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "node server.js",
     "build": "next build",
-    "start": "next start",
+    "start": "NODE_ENV=production node server.js",
     "lint": "next lint"
   },
   "dependencies": {
     "@opentelemetry/api": "^1.4.1",
     "@opentelemetry/auto-instrumentations-node": "^0.36.6",
+    "@opentelemetry/exporter-collector-proto": "^0.25.0",
     "@opentelemetry/exporter-jaeger": "^1.12.0",
     "@opentelemetry/instrumentation-express": "^0.32.2",
     "@opentelemetry/instrumentation-http": "^0.38.0",
     "@opentelemetry/sdk-node": "^0.38.0",
+    "@opentelemetry/sdk-trace-base": "^1.12.0",
+    "@opentelemetry/sdk-trace-node": "^1.12.0",
     "eslint": "8.39.0",
     "eslint-config-next": "13.3.2",
+    "express": "^4.18.2",
+    "http-proxy-middleware": "^2.0.6",
     "next": "13.3.2",
     "react": "18.2.0",
     "react-dom": "18.2.0"

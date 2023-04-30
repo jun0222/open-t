@@ -1,16 +1,31 @@
+// OpenTelemetryのインポート
+const opentelemetry = require("@opentelemetry/api");
+const { NodeTracerProvider } = require("@opentelemetry/sdk-trace-node");
 const {
-  getNodeAutoInstrumentations,
-} = require("@opentelemetry/auto-instrumentations-node");
-const { NodeSDK } = require("@opentelemetry/sdk-node");
-const { JaegerExporter } = require("@opentelemetry/exporter-jaeger");
+  CollectorTraceExporter,
+} = require("@opentelemetry/exporter-collector-proto");
+const { SimpleSpanProcessor } = require("@opentelemetry/sdk-trace-base");
+const { HttpInstrumentation } = require("@opentelemetry/instrumentation-http");
+const {
+  ExpressInstrumentation,
+} = require("@opentelemetry/instrumentation-express");
 
-const exporter = new JaegerExporter({
-  serviceName: "open-t", // 適切なサービス名に置き換えてください
-});
+// OpenTelemetryの初期化
+const initOpenTelemetry = () => {
+  const provider = new NodeTracerProvider();
+  const exporter = new CollectorTraceExporter({
+    serviceName: "nextjs-jaeger-example",
+    url: "http://localhost:14250", // JaegerのgRPCエンドポイント
+  });
 
-const sdk = new NodeSDK({
-  traceExporter: exporter,
-  instrumentations: [getNodeAutoInstrumentations()],
-});
+  provider.addSpanProcessor(new SimpleSpanProcessor(exporter));
+  provider.register();
 
-sdk.start();
+  // HTTPとExpressのインストゥルメンテーションを有効化
+  const httpInstrumentation = new HttpInstrumentation();
+  const expressInstrumentation = new ExpressInstrumentation();
+  httpInstrumentation.setTracerProvider(provider);
+  expressInstrumentation.setTracerProvider(provider);
+};
+
+initOpenTelemetry();
